@@ -1,0 +1,7 @@
+{
+  "name": "Piso",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
