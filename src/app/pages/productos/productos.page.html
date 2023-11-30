@@ -1,0 +1,60 @@
+<!-- <ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="8">
+        <ion-button (click)="setOpen(true)">
+          Nuevo producto
+        </ion-button>
+      </ion-col>
+      <ion-col size="2">
+        <ion-button [disabled]="cambios">
+          Guardar
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+<ion-list *ngFor="let producto of productos">
+<ion-item style="color: white;" >
+  {{producto.nombre}}
+  <ion-button fill="clear" style="margin-left: 35px; font-size: medium; color: white; font-weight: blond;">{{producto.precio}} <ion-icon name="logo-euro"></ion-icon></ion-button>
+  
+  <ion-toggle slot="end" mode="ios" color="medium" [checked]="producto.comprado" (ionChange)="cambiaEstado($event, producto.nombre, producto.precio)"> </ion-toggle>
+</ion-item>
+</ion-list>
+
+
+<!-- Modal para nuevo Producto (click)="modal.dismiss()" (submit)="nuevoProducto()"-->
+<ion-modal id="example-modal" [isOpen]="isModalOpen" #modal>
+  <ng-template>
+    <div class="wrapper">
+      <h1>Nuevo Producto</h1>
+      <form [formGroup]="formReg"  >
+      <ion-list lines="none">
+        <ion-item >
+          <ion-input label="Nombre"   formControlName="nombre"></ion-input>
+        </ion-item>
+        <ion-item >
+          <ion-input label="Precio" type="number" formControlName="precio"></ion-input>
+        </ion-item>
+        <ion-item   class="ion-align-items-center">
+          <ion-button  fill="clear" style="margin-left: 100px;" (click)="nuevoProducto()">
+            <ion-icon name="checkmark"></ion-icon>
+          </ion-button>
+         
+        </ion-item>
+      </ion-list>
+    </form>
+    </div>
+  </ng-template>
+</ion-modal>
+</ion-content>
