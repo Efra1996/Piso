@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Productos } from 'src/app/interfaces/interfaces';
 import { FirebaseService } from 'src/app/services/firebase.service';
+import { ModalController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-productos',
@@ -9,8 +11,9 @@ import { FirebaseService } from 'src/app/services/firebase.service';
   styleUrls: ['./productos.page.scss'],
 })
 export class ProductosPage implements OnInit {
-  isModalOpen =false;
-  cambios = true;
+  isModalOpen =false;// Boleano para abrir modal nuevo producto
+  cambios : Boolean= true;// Boleano para activar o descactivar boton de guardar cambios 
+  openPersona = false; // Bolean para abrir modal de quien paga 
   formReg: FormGroup = this.fb.group({
     precio: new FormControl('', Validators.required),
     nombre: new FormControl('', Validators.required),
@@ -20,7 +23,8 @@ export class ProductosPage implements OnInit {
   productos : Productos [] = [];
   productosActualizados : Productos [] =[];
   constructor(private fb: FormBuilder,
-              private firebase : FirebaseService) { 
+              private firebase : FirebaseService,
+              private modalController: ModalController) { 
                 this.allProducts();
               }
 
@@ -42,6 +46,14 @@ export class ProductosPage implements OnInit {
   setOpen(isOpen: boolean) {
     this.isModalOpen = isOpen;
   }
+  setOpenPagador(isOpen: boolean) {
+    this.openPersona = isOpen;
+  }
+  pulsarFuera(event: any){
+    this.openPersona = false;
+    console.log(this.openPersona)
+
+  }
 
   allProducts(){
     this.productos=[];
@@ -56,7 +68,7 @@ export class ProductosPage implements OnInit {
 
         })
         this.productos = this.productos.sort((a, b) => a.nombre.localeCompare(b.nombre));
-        this.productosOriginal=this.productos;
+       // this.productosOriginal=this.productos;
       }
     ).catch();
   }
@@ -78,14 +90,43 @@ export class ProductosPage implements OnInit {
       comprado: comprado
     });
 
-    this.cambios = this.productosActualizados.some(productoActualizado => {
-      const productoOriginal = this.productos.find(producto => producto.nombre === productoActualizado.nombre);
     
-      return  !(productoOriginal!.comprado !== productoActualizado.comprado);
-    });
+
+
+    this.cambios=!this.comrpobarCambios();
     
-    
-    console.log(this.productosActualizados,this.productosOriginal);
+    console.log(this.productosActualizados,this.productosOriginal,this.cambios);
+  }
+
+  guardarCambios(){
+    if(this.comrpobarCambios()){
+     const productoComprado= this.productosActualizados.find(producto => producto.comprado===true);
+     if(productoComprado){
+      console.log('Hay un producto comprado')
+
+      this.openPersona=true;
+     }else{
+      console.log('Los cambios son de productos a comprar')
+     }
+    }else{
+      console.log('No hay cambios')
+    }
+
+  }
+  comrpobarCambios (): Boolean{
+    let cambios =0;
+    this.productosActualizados.map(
+      (productoActualizado : Productos)=>{
+        const productoEncontrado =  this.productos.find(producto => producto.nombre === productoActualizado.nombre);
+        if(!productoEncontrado || productoEncontrado.comprado !== productoActualizado.comprado){
+          cambios++;
+        }
+      }
+    );
+    return cambios>0;
+  }
+  elegirPagador(event: any) {
+    console.log('ionChange fired with value: ' + event.detail.value);
   }
   
 }

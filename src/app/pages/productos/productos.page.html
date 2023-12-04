@@ -15,20 +15,18 @@
         </ion-button>
       </ion-col>
       <ion-col size="2">
-        <ion-button [disabled]="cambios">
+        <ion-button (click)="guardarCambios()" [disabled]="cambios">
           Guardar
         </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
-
-
 <ion-list *ngFor="let producto of productos">
 <ion-item style="color: white;" >
   {{producto.nombre}}
   <ion-button fill="clear" style="margin-left: 35px; font-size: medium; color: white; font-weight: blond;">{{producto.precio}} <ion-icon name="logo-euro"></ion-icon></ion-button>
   
-  <ion-toggle slot="end" mode="ios" color="medium" [checked]="producto.comprado" (ionChange)="cambiaEstado($event, producto.nombre, producto.precio)"> </ion-toggle>
+  <ion-toggle slot="end" mode="ios" color="medium" [checked]="producto.comprado"  (ionChange)="cambiaEstado($event, producto.nombre, producto.precio)"> </ion-toggle>
 </ion-item>
 </ion-list>
 
@@ -54,6 +52,30 @@
         </ion-item>
       </ion-list>
     </form>
+    </div>
+  </ng-template>
+</ion-modal>
+<!-- Modal para quien hace la compra-->
+<ion-modal id="example-modal" [isOpen]="openPersona"  (ionModalDidDismiss)="pulsarFuera($event)">
+  <ng-template>
+    <div class="wrapper">
+      <h1 style="text-align: center;">¿Quien realiza la compra?</h1>
+      <ion-list>
+        <ion-item>
+    <ion-select aria-label="Persona" interface="popover" placeholder="Elige al pringado que paga" (ionChange)="elegirPagador($event)">
+      <ion-select-option value="efra">Efra</ion-select-option>
+      <ion-select-option value="maria">Maria</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item   style="display: flex; justify-content: space-around;">
+    <ion-button  fill="clear" color="success"  style="flex: 1;">
+      <ion-icon name="checkmark"></ion-icon>
+    </ion-button>
+    <ion-button  fill="clear" color="danger" style="flex: 1;"  (click)="setOpenPagador(false)">
+      <ion-icon name="close"></ion-icon>
+    </ion-button>
+  </ion-item>
+</ion-list>
     </div>
   </ng-template>
 </ion-modal>
