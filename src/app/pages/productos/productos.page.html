@@ -58,20 +58,27 @@
 <!-- Modal para quien hace la compra-->
 <ion-modal id="example-modal" [isOpen]="openPersona"  (ionModalDidDismiss)="pulsarFuera($event)">
   <ng-template>
-    <div class="wrapper">
-      <h1 style="text-align: center;">¿Quien realiza la compra?</h1>
+    <div class="wrapper" class="ion-text-uppercase" >
+      <h1 style="text-align: center;">Revisa la compra</h1>
       <ion-list>
-        <ion-item>
+        <ion-item *ngFor="let producto of productosComprados" lines="full">
+          <ion-label slot="start">{{producto.nombre}}</ion-label>
+          <ion-label slot="end">{{producto.precio}}€</ion-label>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label slot="end">Total: {{calcularTotal()}}€</ion-label>
+        </ion-item>  
+      <ion-item lines="none">
     <ion-select aria-label="Persona" interface="popover" placeholder="Elige al pringado que paga" (ionChange)="elegirPagador($event)">
       <ion-select-option value="efra">Efra</ion-select-option>
       <ion-select-option value="maria">Maria</ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item   style="display: flex; justify-content: space-around;">
-    <ion-button  fill="clear" color="success"  style="flex: 1;">
+  <ion-item   style="display: flex; justify-content: space-around;" lines="none">
+    <ion-button  fill="clear" color="success"  style="flex: 1;" (click)="realizaraCompra()" slot="start">
       <ion-icon name="checkmark"></ion-icon>
     </ion-button>
-    <ion-button  fill="clear" color="danger" style="flex: 1;"  (click)="setOpenPagador(false)">
+    <ion-button  fill="clear" color="danger" style="flex: 1;"  (click)="setOpenPagador(false)" slot="end">
       <ion-icon name="close"></ion-icon>
     </ion-button>
   </ion-item>

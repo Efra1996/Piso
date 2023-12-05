@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { initializeApp } from "firebase/app";
 import { environment } from 'src/environments/environment';
-import { addDoc, collection, deleteDoc, getDocs, getFirestore, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, getDocs, getFirestore, query, updateDoc, where, writeBatch } from "firebase/firestore";
+import { Productos } from '../interfaces/interfaces';
 @Injectable({
   providedIn: 'root'
 })
@@ -99,28 +100,57 @@ export class FirebaseService {
     });
   }
 
-  actualizarEstado(nombre: string, comprado: boolean): Promise<any> {
-    const productossRef = collection(this.db, "produtos");
-    const q = query(productossRef, where("nombre", "==", nombre));
+  // actualizarEstado(nombre: string, comprado: boolean): Promise<any> {
+  //   const productossRef = collection(this.db, "produtos");
+  //   const q = query(productossRef, where("nombre", "==", nombre));
 
-    return new Promise((resolve, reject) => {
-      getDocs(q)
+  //   return new Promise((resolve, reject) => {
+  //     getDocs(q)
+  //       .then((querySnapshot) => {
+
+  //         querySnapshot.forEach((doc) => {
+  //           updateDoc(doc.ref, {
+  //             comprado:comprado
+  //           })
+  //           const notas = doc.data();
+  //           resolve(notas);
+  //         });
+  //         resolve(null); 
+  //       })
+  //       .catch((error) => {
+  //         reject(error);
+  //       });
+  //   });
+  // }
+  actualizarEstado(productos: Productos[]): Promise<any> {
+    const productossRef = collection(this.db, "productos");
+    const batch = writeBatch(this.db);
+  
+    // Crea un array de promesas para todas las operaciones asíncronas
+    const promises = productos.map(producto => {
+      const q = query(productossRef, where("nombre", "==", producto.nombre));
+  
+      return getDocs(q)
         .then((querySnapshot) => {
-
           querySnapshot.forEach((doc) => {
-            updateDoc(doc.ref, {
-              comprado:comprado
-            })
-            const notas = doc.data();
-            resolve(notas);
+            batch.update(doc.ref, {
+              comprado: producto.comprado
+            });
           });
-          resolve(null); 
         })
         .catch((error) => {
-          reject(error);
+          console.error("Error al obtener datos:", error);
         });
     });
+  
+    // Espera a que todas las promesas se completen antes de realizar el commit
+    return Promise.all(promises)
+      .then(() => batch.commit())
+      .catch((error) => {
+        console.error("Error al ejecutar operaciones asíncronas:", error);
+      });
   }
+  
   // public async addNewFromGallery() {
 
   //   const capturedPhoto2 = await Camera.pickImages({

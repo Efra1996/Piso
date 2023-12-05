@@ -3,6 +3,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Productos } from 'src/app/interfaces/interfaces';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { ModalController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
+
 
 
 @Component({
@@ -19,12 +21,15 @@ export class ProductosPage implements OnInit {
     nombre: new FormControl('', Validators.required),
   }
   )
-  productosOriginal: Productos [] = [];
+  listaCompra: Productos [] = [];
+  productosComprados: Productos [] = [];
   productos : Productos [] = [];
   productosActualizados : Productos [] =[];
   constructor(private fb: FormBuilder,
               private firebase : FirebaseService,
-              private modalController: ModalController) { 
+              //private modalController: ModalController,
+              private toastController: ToastController
+              ) { 
                 this.allProducts();
               }
 
@@ -74,38 +79,60 @@ export class ProductosPage implements OnInit {
   }
   cambiaEstado(event: any, nombre: string, precio: number) {
     const comprado = event.detail.checked;
-  
     // Buscar si ya hay un producto con el mismo nombre
     const indiceExistente = this.productosActualizados.findIndex(producto => producto.nombre === nombre);
-  
     if (indiceExistente !== -1) {
       // Si ya existe, eliminar el producto existente
       this.productosActualizados.splice(indiceExistente, 1);
-    }
-  
+    } 
     // Agregar el nuevo producto al array
     this.productosActualizados.push({
       nombre: nombre,
       precio: precio,
       comprado: comprado
     });
+    if(comprado===false){
+      
+      const indiceExistente = this.listaCompra.findIndex(producto => producto.nombre === nombre);
+      if (indiceExistente !== -1) {
+        // Si ya existe, eliminar el producto existente
+        this.listaCompra.splice(indiceExistente, 1);
 
-    
+      }else{
+        this.listaCompra.push({
+          nombre: nombre,
+          precio: precio,
+          comprado: comprado
+        });
+      }
+      
+    }else{
+      const indiceExistente = this.productosComprados.findIndex(producto => producto.nombre === nombre);
+      if (indiceExistente !== -1) {
+        // Si ya existe, eliminar el producto existente
+        this.productosComprados.splice(indiceExistente, 1);
 
-
+      }else{
+        this.productosComprados.push({
+          nombre: nombre,
+          precio: precio,
+          comprado: comprado
+        });
+      }
+    }
     this.cambios=!this.comrpobarCambios();
     
-    console.log(this.productosActualizados,this.productosOriginal,this.cambios);
+    console.log(this.productosActualizados,this.listaCompra,this.cambios);
   }
 
   guardarCambios(){
     if(this.comrpobarCambios()){
      const productoComprado= this.productosActualizados.find(producto => producto.comprado===true);
      if(productoComprado){
-      console.log('Hay un producto comprado')
-
       this.openPersona=true;
      }else{
+      this.mostrarToast('Pues toca ir a comprar! ☺');
+      this.cambios=true;
       console.log('Los cambios son de productos a comprar')
      }
     }else{
@@ -128,5 +155,38 @@ export class ProductosPage implements OnInit {
   elegirPagador(event: any) {
     console.log('ionChange fired with value: ' + event.detail.value);
   }
+  async mostrarToast(mensaje : string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 2000, // Duración en milisegundos
+      position: 'bottom', // Posición del toast: 'top', 'bottom', 'middle'
+      color: 'success', // Color del toast: 'primary', 'secondary', 'tertiary', 'success', 'warning', 'danger', 'light', 'medium', 'dark'
+      buttons: [
+        {
+          side: 'end',
+          icon: 'close-outline',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cerrar toast');
+          }
+        }
+      ]
+    });
+  
+    await toast.present();
+  }
+  calcularTotal(): number {
+    return this.productosComprados.reduce((total, producto) => total + producto.precio, 0);
+  }
+  realizaraCompra(){
+    this.firebase.actualizarEstado(this.productosComprados).then(()=>{
+      this.mostrarToast('Se ha realizado la compra!');
+      this.productosComprados=[];
+      this.allProducts();
+      this.openPersona=false;
+    }      
+    )
+  }
+  
   
 }
