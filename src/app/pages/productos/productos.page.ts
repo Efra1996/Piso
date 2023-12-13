@@ -16,6 +16,7 @@ export class ProductosPage implements OnInit {
   isModalOpen =false;// Boleano para abrir modal nuevo producto
   cambios : Boolean= true;// Boleano para activar o descactivar boton de guardar cambios 
   openPersona = false; // Bolean para abrir modal de quien paga 
+  nombrePagador : string ='';
   formReg: FormGroup = this.fb.group({
     precio: new FormControl('', Validators.required),
     nombre: new FormControl('', Validators.required),
@@ -131,9 +132,12 @@ export class ProductosPage implements OnInit {
      if(productoComprado){
       this.openPersona=true;
      }else{
-      this.mostrarToast('Pues toca ir a comprar! ☺');
-      this.cambios=true;
-      console.log('Los cambios son de productos a comprar')
+      this.firebase.actualizarEstado(this.listaCompra).then(()=>{
+        this.listaCompra=[];
+        this.mostrarToast('Pues toca ir a comprar! ☺');
+        this.cambios=true;
+        this.allProducts();
+      });
      }
     }else{
       console.log('No hay cambios')
@@ -153,7 +157,7 @@ export class ProductosPage implements OnInit {
     return cambios>0;
   }
   elegirPagador(event: any) {
-    console.log('ionChange fired with value: ' + event.detail.value);
+    this.nombrePagador=event.detail.value;
   }
   async mostrarToast(mensaje : string) {
     const toast = await this.toastController.create({
@@ -179,14 +183,48 @@ export class ProductosPage implements OnInit {
     return this.productosComprados.reduce((total, producto) => total + producto.precio, 0);
   }
   realizaraCompra(){
-    this.firebase.actualizarEstado(this.productosComprados).then(()=>{
-      this.mostrarToast('Se ha realizado la compra!');
-      this.productosComprados=[];
-      this.allProducts();
-      this.openPersona=false;
-    }      
-    )
+    this.firebase.historialCompra(this.nombrePagador,this.productosComprados,this.calcularTotal(),this.obtenerFechaYHoraActual()).then(()=>{
+      this.firebase.actualizarEstado(this.productosComprados).then(()=>{
+        this.mostrarToast('Se ha realizado la compra!');
+        this.productosComprados=[];
+        this.allProducts();
+        this.openPersona=false;
+        this.cambios=true;
+        this.nombrePagador='';
+      }      
+      );
+    });
   }
+  obtenerFechaYHoraActual() {
+    const fecha = new Date();
   
+    // Obtener día, mes y año
+    const dia = fecha.getDate();
+    const mes = fecha.getMonth() + 1; // Los meses van de 0 a 11
+    const anio = fecha.getFullYear();
+  
+    // Obtener horas y minutos
+    const horas = fecha.getHours();
+    const minutos = fecha.getMinutes();
+    let minutes = minutos < 10 ? '0' + minutos : minutos;
+    // Formatear la fecha y hora
+    const fechaFormateada = `${dia}/${mes}/${anio} ${horas}:${minutes}`;
+  
+    return fechaFormateada;
+  }
+  //Metodo para recargar la pagina
+  doRefresh(event: any) {
+    // Lógica de recarga aquí (por ejemplo, recargar datos desde el servidor)
+    this.cambios=true;
+    this.listaCompra=[];
+    this.productosComprados=[];
+    this.allProducts();
+    // Simula una tarea asíncrona
+    setTimeout(() => {
+      console.log('Recarga completada');
+      // Completa el evento de recarga
+      event.target.complete();
+    }, 2000);
+  }
   
 }

@@ -298,5 +298,41 @@ export class FirebaseService {
       // Uh-oh, an error occurred!
     });
   }
+  // Metodos para el historial
+  async historialCompra(nombre: string, productos: Productos[], total : number, fecha : string) {
+    try {
+      const docRef = addDoc(collection(this.db, "historial"), {
+        nombre: nombre,
+        productos: productos,
+        total:total,
+        fecha:fecha
+      }).then(() => {
+        console.log("Document writte");
+      }).catch(() => {
+       console.log("Fail");
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+  recuperarHistorial(): Promise<any> {
+    const historialRef = collection(this.db, "historial");
+    const q = query(historialRef);
+    const historial: any[] = [];
+    return new Promise((resolve, reject) => {
+      getDocs(q)
+        .then((querySnapshot) => {
+
+          querySnapshot.forEach((doc) => {
+            historial.push(doc.data());
+            resolve(historial);
+          });
+          resolve(null);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
 
 }

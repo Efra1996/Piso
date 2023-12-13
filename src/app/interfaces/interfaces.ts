@@ -3,3 +3,9 @@ export interface Productos {
     precio: number,
     comprado: boolean
 }
+export interface Historial {
+    nombre: string,
+    productos: Productos[],
+    fecha: string,
+    total : number
+}

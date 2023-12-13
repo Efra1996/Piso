@@ -1,21 +1,26 @@
-<!-- <ion-header [translucent]="true">
-  <ion-toolbar>
+<ion-header [translucent]="true">
+  <ion-toolbar class="ion-text-uppercase">
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-menu-button color="secondary"></ion-menu-button>
     </ion-buttons>
+    <ion-title class="center-title" >Lista de la compra</ion-title>
   </ion-toolbar>
-</ion-header> -->
+</ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
+    <!-- Recargar la pagina -->
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-grid>
     <ion-row>
       <ion-col size="8">
-        <ion-button (click)="setOpen(true)">
+        <ion-button (click)="setOpen(true)" color="secondary">
           Nuevo producto
         </ion-button>
       </ion-col>
       <ion-col size="2">
-        <ion-button (click)="guardarCambios()" [disabled]="cambios">
+        <ion-button (click)="guardarCambios()" [disabled]="cambios" color="secondary">
           Guardar
         </ion-button>
       </ion-col>
@@ -75,7 +80,7 @@
     </ion-select>
   </ion-item>
   <ion-item   style="display: flex; justify-content: space-around;" lines="none">
-    <ion-button  fill="clear" color="success"  style="flex: 1;" (click)="realizaraCompra()" slot="start">
+    <ion-button  fill="clear" color="success"  style="flex: 1;" [disabled]="nombrePagador === ''" (click)="realizaraCompra()" slot="start">
       <ion-icon name="checkmark"></ion-icon>
     </ion-button>
     <ion-button  fill="clear" color="danger" style="flex: 1;"  (click)="setOpenPagador(false)" slot="end">
