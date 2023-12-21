@@ -9,3 +9,7 @@ export interface Historial {
     fecha: string,
     total : number
 }
+export interface Cuentas {
+    nombre: string,
+    saldo : number
+}

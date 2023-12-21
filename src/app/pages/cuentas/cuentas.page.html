@@ -8,10 +8,22 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="ion-padding">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">cuentas</ion-title>
     </ion-toolbar>
   </ion-header>
+  <ion-card *ngFor="let cuentaPersonal of cuentas" >
+    <img alt="Silhouette of mountains"   [src]="cuentaPersonal.nombre === 'maria' ? 'https://ionicframework.com/docs/img/demos/card-media.png' : '../../assets/icon/favicon.png'"
+    />
+    <ion-card-header>
+      <ion-card-title color="white">{{cuentaPersonal.nombre | titlecase}}</ion-card-title>
+      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+    </ion-card-header>
+  
+    <ion-card-content>
+      {{cuentaPersonal.saldo}}
+    </ion-card-content>
+  </ion-card>
 </ion-content>

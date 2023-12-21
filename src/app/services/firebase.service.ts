@@ -99,29 +99,6 @@ export class FirebaseService {
         });
     });
   }
-
-  // actualizarEstado(nombre: string, comprado: boolean): Promise<any> {
-  //   const productossRef = collection(this.db, "produtos");
-  //   const q = query(productossRef, where("nombre", "==", nombre));
-
-  //   return new Promise((resolve, reject) => {
-  //     getDocs(q)
-  //       .then((querySnapshot) => {
-
-  //         querySnapshot.forEach((doc) => {
-  //           updateDoc(doc.ref, {
-  //             comprado:comprado
-  //           })
-  //           const notas = doc.data();
-  //           resolve(notas);
-  //         });
-  //         resolve(null); 
-  //       })
-  //       .catch((error) => {
-  //         reject(error);
-  //       });
-  //   });
-  // }
   actualizarEstado(productos: Productos[]): Promise<any> {
     const productossRef = collection(this.db, "productos");
     const batch = writeBatch(this.db);
@@ -326,6 +303,49 @@ export class FirebaseService {
           querySnapshot.forEach((doc) => {
             historial.push(doc.data());
             resolve(historial);
+          });
+          resolve(null);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  //Metodos para las cuentas
+  actualizarSaldo(nombre: string, saldo: number): Promise<any> {
+    const productossRef = collection(this.db, "cuentas");
+    const q = query(productossRef, where("nombre", "==", nombre));
+
+    return new Promise((resolve, reject) => {
+      getDocs(q)
+        .then((querySnapshot) => {
+
+          querySnapshot.forEach((doc) => {
+            updateDoc(doc.ref, {
+              saldo:saldo
+            })
+            const notas = doc.data();
+            resolve(notas);
+          });
+          resolve(null); 
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+  recuperarSaldo(): Promise<any> {
+    const historialRef = collection(this.db, "cuentas");
+    const q = query(historialRef);
+    const cuentas: any[] = [];
+    return new Promise((resolve, reject) => {
+      getDocs(q)
+        .then((querySnapshot) => {
+
+          querySnapshot.forEach((doc) => {
+            cuentas.push(doc.data());
+            resolve(cuentas);
           });
           resolve(null);
         })
