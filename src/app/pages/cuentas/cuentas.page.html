@@ -14,13 +14,13 @@
       <ion-title size="large">cuentas</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-card *ngFor="let cuentaPersonal of cuentas" style="border-radius: 25px; border: 1px solid rgb(255, 255, 255); ">
-    <ion-thumbnail>
+  <ion-card *ngFor="let cuentaPersonal of cuentas" style="border-radius: 25px; border: 1px solid rgb(255, 255, 255); " >
+    <ion-thumbnail style="margin-left:100px;">
     <img alt="Foto de perfil"   [src]="cuentaPersonal.nombre === 'maría' ? '../../assets/icon/ariaB.jpeg' : '../../assets/icon/efra.jpeg'"
     
     />
   </ion-thumbnail>
-    <ion-card-header>
+    <ion-card-header class="ion-align-items-center">
       <ion-card-title color="light">{{cuentaPersonal.nombre | titlecase}}</ion-card-title>
       <ion-card-subtitle>
         <ion-text [style.color]="cuentaPersonal.saldo >= 0 ? 'green' : 'red'" >
