@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Productos } from 'src/app/interfaces/interfaces';
+import { Cuentas, Productos } from 'src/app/interfaces/interfaces';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { ModalController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
@@ -57,6 +57,7 @@ export class ProductosPage implements OnInit {
   }
   pulsarFuera(event: any){
     this.openPersona = false;
+    this.isModalOpen = false;
     console.log(this.openPersona)
 
   }
@@ -183,8 +184,10 @@ export class ProductosPage implements OnInit {
     return this.productosComprados.reduce((total, producto) => total + producto.precio, 0);
   }
   realizaraCompra(){
-    this.firebase.historialCompra(this.nombrePagador,this.productosComprados,this.calcularTotal(),this.obtenerFechaYHoraActual()).then(()=>{
-      this.firebase.actualizarEstado(this.productosComprados).then(()=>{
+    const totalCommpra = this.calcularTotal();
+    this.firebase.historialCompra(this.nombrePagador,this.productosComprados,totalCommpra,this.obtenerFechaYHoraActual()).then(()=>{
+      this.firebase.actualizarEstado(this.productosComprados).then(async ()=>{
+        await this.actualizarSaldos(this.nombrePagador,totalCommpra);
         this.mostrarToast('Se ha realizado la compra!');
         this.productosComprados=[];
         this.allProducts();
@@ -225,6 +228,30 @@ export class ProductosPage implements OnInit {
       // Completa el evento de recarga
       event.target.complete();
     }, 2000);
+  }
+  //Metodo para actualizar el salario despues de una compra
+  actualizarSaldos(nombrePagador : string,totalCommpra : number){
+    let saldoActualPagador : Cuentas;
+    let saldoActualDebe : Cuentas;
+    const importeCompra =totalCommpra/2;
+    let cuentasTotal : Cuentas[] =[];
+    this.firebase.recuperarSaldo().then((cuentas)=>{
+      cuentasTotal=cuentas;
+      saldoActualPagador=cuentasTotal.find(cuentaPagador => cuentaPagador.nombre===nombrePagador)!;
+      saldoActualDebe=cuentasTotal.find(cuentaDebe => cuentaDebe.nombre!==nombrePagador)!;
+      saldoActualPagador.saldo = saldoActualPagador.saldo+importeCompra;
+      saldoActualDebe.saldo = saldoActualDebe.saldo-importeCompra;
+      this.recorrerCuentasCambiandoSaldos(cuentasTotal);
+    }).catch();
+  }
+
+  recorrerCuentasCambiandoSaldos(cuentasActualizadas : Cuentas[]){
+    cuentasActualizadas.forEach(
+      (cuentaPersonal)=>{
+        this.firebase.actualizarSaldo(cuentaPersonal.nombre,cuentaPersonal.saldo).then(()=>{
+        });
+      }
+    )
   }
   
 }

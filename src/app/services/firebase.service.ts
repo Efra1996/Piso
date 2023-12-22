@@ -354,5 +354,24 @@ export class FirebaseService {
         });
     });
   }
+  recuperarSaldoPersona(nombre : string): Promise<any> {
+    const historialRef = collection(this.db, "cuentas");
+    const q = query(historialRef, where("nombre", "==", nombre));
+    const cuentas: any[] = [];
+    return new Promise((resolve, reject) => {
+      getDocs(q)
+        .then((querySnapshot) => {
+
+          querySnapshot.forEach((doc) => {
+            // cuentas.push(doc.data());
+            resolve(doc.data());
+          });
+          resolve(null);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
 
 }

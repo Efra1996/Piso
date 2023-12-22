@@ -14,16 +14,29 @@
       <ion-title size="large">cuentas</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-card *ngFor="let cuentaPersonal of cuentas" >
-    <img alt="Silhouette of mountains"   [src]="cuentaPersonal.nombre === 'maria' ? 'https://ionicframework.com/docs/img/demos/card-media.png' : '../../assets/icon/favicon.png'"
+  <ion-card *ngFor="let cuentaPersonal of cuentas" style="border-radius: 25px; border: 1px solid rgb(255, 255, 255); ">
+    <ion-thumbnail>
+    <img alt="Foto de perfil"   [src]="cuentaPersonal.nombre === 'maría' ? '../../assets/icon/ariaB.jpeg' : '../../assets/icon/efra.jpeg'"
+    
     />
+  </ion-thumbnail>
     <ion-card-header>
-      <ion-card-title color="white">{{cuentaPersonal.nombre | titlecase}}</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+      <ion-card-title color="light">{{cuentaPersonal.nombre | titlecase}}</ion-card-title>
+      <ion-card-subtitle>
+        <ion-text [style.color]="cuentaPersonal.saldo >= 0 ? 'green' : 'red'" >
+          {{ cuentaPersonal.saldo >= 0 ? 'Saldo a favor:' : 'Saldo en contra:' }}
+        </ion-text>
+        
+      </ion-card-subtitle>
+      
     </ion-card-header>
   
     <ion-card-content>
-      {{cuentaPersonal.saldo}}
+      <ion-item>
+      <ion-text style="font-size: 20px;" [style.color]="cuentaPersonal.saldo >= 0 ? 'green' : 'red'" slot="start">{{cuentaPersonal.saldo | number: '1.2-2' }}€</ion-text>
+      <ion-button *ngIf="cuentaPersonal.saldo < 0" slot="end" fill="outline" shape="round" color="danger" >SALDAR DEUDAS</ion-button>
+      <ion-button *ngIf="cuentaPersonal.saldo > 0" slot="end" fill="outline" shape="round" color="success" >PA-GA-ME</ion-button>
+    </ion-item>
     </ion-card-content>
   </ion-card>
 </ion-content>

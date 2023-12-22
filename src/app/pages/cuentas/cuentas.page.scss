@@ -7,11 +7,7 @@ ion-content {
 ion-list{
   --ion-background-color: #f0f0f0; 
 }
-ion-item{
 
-  --ion-background-color: #f0f0f0; 
-
-}
 .center-title {
     text-align: center;
     width: 100%;
@@ -19,4 +15,8 @@ ion-item{
     font-family: 'Roboto', sans-serif;
     font-weight: bold;
     font-size: 25px;
+}
+ion-thumbnail {
+  --size: 140px;
+  --border-radius: 14px;
 }

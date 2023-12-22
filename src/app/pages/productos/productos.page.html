@@ -37,7 +37,7 @@
 
 
 <!-- Modal para nuevo Producto (click)="modal.dismiss()" (submit)="nuevoProducto()"-->
-<ion-modal id="example-modal" [isOpen]="isModalOpen" #modal>
+<ion-modal id="example-modal" [isOpen]="isModalOpen" #modal (ionModalDidDismiss)="pulsarFuera($event)">
   <ng-template>
     <div class="wrapper">
       <h1>Nuevo Producto</h1>
@@ -76,7 +76,7 @@
       <ion-item lines="none">
     <ion-select aria-label="Persona" interface="popover" placeholder="Elige al pringado que paga" (ionChange)="elegirPagador($event)">
       <ion-select-option value="efra">Efra</ion-select-option>
-      <ion-select-option value="maria">Maria</ion-select-option>
+      <ion-select-option value="maría">María</ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item   style="display: flex; justify-content: space-around;" lines="none">
