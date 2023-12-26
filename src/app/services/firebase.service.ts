@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { initializeApp } from "firebase/app";
 import { environment } from 'src/environments/environment';
-import { addDoc, collection, deleteDoc, getDocs, getFirestore, query, updateDoc, where, writeBatch } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, getDocs, getFirestore, orderBy, query, updateDoc, where, writeBatch } from "firebase/firestore";
 import { Productos } from '../interfaces/interfaces';
 @Injectable({
   providedIn: 'root'
@@ -294,7 +294,7 @@ export class FirebaseService {
   }
   recuperarHistorial(): Promise<any> {
     const historialRef = collection(this.db, "historial");
-    const q = query(historialRef);
+    const q = query(historialRef, orderBy("fecha","desc"));
     const historial: any[] = [];
     return new Promise((resolve, reject) => {
       getDocs(q)

@@ -5,8 +5,8 @@ ion-menu-button {
 #container {
   text-align: center;
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 15px;
+  right: 15px;
   top: 50%;
   transform: translateY(-50%);
 }
@@ -25,4 +25,18 @@ ion-menu-button {
 
 #container a {
   text-decoration: none;
+}
+ion-content {
+  --ion-background-color: #1e1e1e; 
+}
+ion-toolbar {
+  --ion-background-color: #1e1e1e; 
+}
+/* styles.css o tu archivo de estilos del componente */
+.custom-card {
+  background-image: url('../../assets/icon/menuFondo1.jpg');
+  background-size: cover; /* Ajusta el tamaño de la imagen para cubrir completamente el fondo */
+  background-position: center; /* Ajusta la posición de la imagen */
+  color: white; /* Ajusta el color del texto para que sea legible sobre la imagen de fondo */
+  border-radius: 15px;
 }

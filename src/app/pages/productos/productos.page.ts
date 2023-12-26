@@ -80,7 +80,8 @@ export class ProductosPage implements OnInit {
     ).catch();
   }
   cambiaEstado(event: any, nombre: string, precio: number) {
-    const comprado = event.detail.checked;
+    const comprado = event.detail.value;
+    console.log(event);
     // Buscar si ya hay un producto con el mismo nombre
     const indiceExistente = this.productosActualizados.findIndex(producto => producto.nombre === nombre);
     if (indiceExistente !== -1) {

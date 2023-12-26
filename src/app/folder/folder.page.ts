@@ -9,6 +9,15 @@ import { ActivatedRoute } from '@angular/router';
 export class FolderPage implements OnInit {
   public folder!: string;
   private activatedRoute = inject(ActivatedRoute);
+  public appPages = [
+    { title: 'Lista de la compra', url: '/productos', icon: 'bag-handle' },
+    { title: 'Historial', url: '/historial', icon: 'receipt' },
+    { title: 'Cuentas', url: '/cuentas', icon: 'wallet' },
+    { title: 'Configuraciones', url: '/cuentas', icon: 'settings' },
+    { title: 'Tickets', url: '/cuentas', icon: 'ticket' },
+
+
+  ];
   constructor() {}
 
   ngOnInit() {

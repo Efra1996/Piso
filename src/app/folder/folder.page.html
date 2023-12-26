@@ -1,21 +1,33 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>{{ folder }}</ion-title>
-  </ion-toolbar>
+
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">{{ folder }}</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+
 
   <div id="container">
-    <strong class="capitalize">{{ folder }}</strong>
-    <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <ion-list auto-hide="false" *ngFor="let p of appPages; let i = index">
+      <ion-card color="light" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected" class="custom-card">
+        <ion-card-header>
+          <ion-card-title style="font-size: 25px; font-family:'Times New Roman', Times, serifxº, Courier, monospace;">
+            {{ p.title }}
+          </ion-card-title>
+          <ion-card-subtitle>
+            
+          </ion-card-subtitle>
+        </ion-card-header>
+      
+        <ion-card-content> 
+          <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'" size="large"></ion-icon> 
+        </ion-card-content>
+      </ion-card>
+
+
+
+    </ion-list>
   </div>
 </ion-content>
+      <!-- <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected" color="light">
+        <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+        <ion-label>{{ p.title }}</ion-label>
+      </ion-item> -->

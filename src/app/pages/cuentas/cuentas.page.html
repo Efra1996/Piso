@@ -14,11 +14,13 @@
       <ion-title size="large">cuentas</ion-title>
     </ion-toolbar>
   </ion-header>
+      <!-- Recargar la pagina -->
+      <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
   <ion-card *ngFor="let cuentaPersonal of cuentas" style="border-radius: 25px; border: 1px solid rgb(255, 255, 255); " >
     <ion-thumbnail style="margin-left:100px;">
-    <img alt="Foto de perfil"   [src]="cuentaPersonal.nombre === 'maría' ? '../../assets/icon/ariaB.jpeg' : '../../assets/icon/efra.jpeg'"
-    
-    />
+    <img alt="Foto de perfil"   [src]="cuentaPersonal.nombre === 'maría' ? '../../assets/icon/ariaF.jpeg' : '../../assets/icon/efra.jpeg'"/>
   </ion-thumbnail>
     <ion-card-header class="ion-align-items-center">
       <ion-card-title color="light">{{cuentaPersonal.nombre | titlecase}}</ion-card-title>
@@ -34,9 +36,85 @@
     <ion-card-content>
       <ion-item>
       <ion-text style="font-size: 20px;" [style.color]="cuentaPersonal.saldo >= 0 ? 'green' : 'red'" slot="start">{{cuentaPersonal.saldo | number: '1.2-2' }}€</ion-text>
-      <ion-button *ngIf="cuentaPersonal.saldo < 0" slot="end" fill="outline" shape="round" color="danger" >SALDAR DEUDAS</ion-button>
+      <ion-button *ngIf="cuentaPersonal.saldo < 0" slot="end" fill="outline" shape="round" color="danger" (click)="setOpen(true)">SALDAR DEUDAS</ion-button>
       <ion-button *ngIf="cuentaPersonal.saldo > 0" slot="end" fill="outline" shape="round" color="success" >PA-GA-ME</ion-button>
     </ion-item>
     </ion-card-content>
   </ion-card>
+  <!-- Boton para gasto nuevo -->
+
+<!-- Modal para saldar cuentas -->
+  <ion-modal  [isOpen]="isModalOpen"  [initialBreakpoint]="1" [breakpoints]="[0, 1]" (ionModalDidDismiss)="pulsarFuera($event)">
+    <ng-template>
+      <div class="block">
+        <ion-button *ngIf="!moroso" expand="block"  shape="round" color="success" (click)="saldarDeudaCompleta()">SE HA PAGADO TODO!</ion-button>
+        <ion-button expand="block"  shape="round" color="danger"  (click)="mostrarForm()">SIGO SIENDO UN MOROSO!</ion-button>
+
+
+        <div *ngIf="moroso">
+            <h1 style="text-align: center; color: #ffffff;">¿CUANTO HAS PAGADO?</h1>
+
+            <ion-input
+             label="Debes en total:" 
+             [value]="cuentaDebe.saldo" 
+             readonly="true" 
+             color="light"
+             style="text-align: center; color: #ffffff;"
+             > </ion-input>
+            <ion-input
+             label="A pagar : " 
+             type="number" 
+             label-placement="floating" 
+             color="light"
+             style="text-align: center; color: #ffffff;"
+             (ionInput)="comprobarCambios($event)"
+             ></ion-input>
+          <ion-button [disabled]="!(cantidadPagada>0&&cantidadPagada<=cuentaDebe.saldo)"
+            expand="full" 
+            color="success"
+            (click)="saldarDeudaParte()"
+            >
+            PAGAR
+          </ion-button>
+        </div>
+      </div>
+
+    </ng-template>
+  </ion-modal>
+<!-- Boton para nuevo gasto -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="setPago(true)">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+<!-- Modal para el gasto -->
+<!-- Modal para nuevo Producto (click)="modal.dismiss()" (submit)="nuevoProducto()"-->
+<ion-modal id="example-modal" [isOpen]="nuevoPago" #modal (ionModalDidDismiss)="pulsarFuera($event)">
+  <ng-template>
+    <div class="wrapper">
+      <h1>Nuevo Pago</h1>
+      <form [formGroup]="formReg"  >
+      <ion-list lines="none">
+        <ion-item >
+          <ion-input label="Concepto"   formControlName="nombre"></ion-input>
+        </ion-item>
+        <ion-item >
+          <ion-input label="Precio" type="number" formControlName="precio"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-select aria-label="Persona" interface="popover" placeholder="Elige al pringado que paga" formControlName="pagador">
+            <ion-select-option value="efra">Efra</ion-select-option>
+            <ion-select-option value="maría">María</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item   class="ion-align-items-center">
+          <ion-button  fill="clear" style="margin-left: 100px;"  color="success" (click)="registrarNuevoPago()" [disabled]="!formReg.valid" >
+            <ion-icon name="checkmark"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </form>
+    </div>
+  </ng-template>
+</ion-modal>
 </ion-content>

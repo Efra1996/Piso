@@ -15,7 +15,7 @@
   </ion-refresher>
   <ion-accordion-group  expand="inset">
     <ion-accordion   toggleIcon="caret-down-circle" toggleIconSlot="end" *ngFor="let compra of historial">
-      <ion-item slot="header" color="secondary">
+      <ion-item slot="header"  [color]="compra.productos.length===1 && compra.productos[0].comprado===false ?'warning':'secondary'">
         <ion-label>{{compra.nombre | titlecase}}</ion-label>
         <ion-label>{{compra.fecha}}</ion-label>
       </ion-item>
