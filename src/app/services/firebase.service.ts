@@ -17,8 +17,6 @@ export class FirebaseService {
   }
   async nuevoProducto(nombre: string, precio: string, comprado : boolean) {
     try {
-
-
       const docRef = addDoc(collection(this.db, "productos"), {
         nombre: nombre,
         precio: precio,
@@ -53,9 +51,9 @@ export class FirebaseService {
     });
   }
 
-  borrarNota(asunto: string) {
-    const productossRef = collection(this.db, "notas");
-    const q = query(productossRef, where("asunto", "==", asunto));
+  borrarProducto(nombre: string) {
+    const productossRef = collection(this.db, "productos");
+    const q = query(productossRef, where("nombre", "==", nombre));
 
     return new Promise((resolve, reject) => {
       getDocs(q)
@@ -68,8 +66,8 @@ export class FirebaseService {
                 reject(error);
               }
             )
-            const nota = doc.data();
-            resolve(nota);
+            const producto = doc.data();
+            resolve(producto);
           });
           resolve(null);
         })
@@ -80,19 +78,23 @@ export class FirebaseService {
 
   }
 
-  recuperarNota(asunto: string): Promise<any> {
-    const productossRef = collection(this.db, "notas");
-    const q = query(productossRef, where("asunto", "==", asunto));
-    const notas: any[] = [];
+  actualizarProducto(nombre : string , nuevoNombre : string , precio : number): Promise<any> {
+    const productossRef = collection(this.db, "productos");
+    const q = query(productossRef, where("nombre", "==", nombre));
+
     return new Promise((resolve, reject) => {
       getDocs(q)
         .then((querySnapshot) => {
 
           querySnapshot.forEach((doc) => {
-            notas.push(doc.data());
+            updateDoc(doc.ref, {
+              nombre:nuevoNombre,
+              precio:precio
+            })
+            const notas = doc.data();
             resolve(notas);
           });
-          resolve(null); // Si no se encuentra ningún alumno con el correo especificado
+          resolve(null); 
         })
         .catch((error) => {
           reject(error);

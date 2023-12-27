@@ -1,0 +1,100 @@
+ion-content {
+    --ion-background-color: #1e1e1e; 
+  }
+  ion-toolbar {
+    --ion-background-color: #1e1e1e; 
+  }
+  .center-title {
+    text-align: center;
+    width: 100%;
+    color: #f0f0f0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: 25px;
+}
+ion-item{
+    border-radius: 15px;
+}
+ion-modal#example-modal {
+    --width: fit-content;
+    --min-width: 250px;
+    --height: fit-content;
+    --border-radius: 6px;
+    --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+  }
+  
+  ion-modal#example-modal h1 {
+    margin: 20px 20px 10px 20px;
+  }
+  
+  ion-modal#example-modal ion-icon {
+    margin-right: 6px;
+  
+    width: 48px;
+    height: 48px;
+  
+    padding: 4px 0;
+  
+    color: #aaaaaa;
+  }
+  
+  ion-modal#example-modal .wrapper {
+    margin-bottom: 10px;
+  }
+  
+  .block {
+    width: 100%;
+    height: 300px;
+    background-color: #1e1e1e; 
+    padding: 5px;
+    // background-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  ion-modal {
+    --height: auto;
+  }
+  ion-fab-button {
+    --background: #b7f399;
+    --background-activated: #87d361;
+    --background-hover: #a3e681;
+    --border-radius: 15px;
+    --box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+    --color: black;
+  }
+  ion-input{
+    //border-radius: 25px;
+  //  border: 1px solid rgb(255, 255, 255);
+    text-align: center;
+  }
+  //CSS PARA ALERT
+  ion-alert.custom-alert {
+    --backdrop-opacity: 0.7;
+  }
+  
+  .custom-alert .alert-button-group {
+    padding: 8px;
+  }
+  
+  button.alert-button.alert-button-confirm {
+    background-color: var(--ion-color-success);
+    color: var(--ion-color-success-contrast);
+  }
+  
+  .md button.alert-button.alert-button-confirm {
+    border-radius: 4px;
+  }
+  
+  .ios .custom-alert button.alert-button {
+    border: 0.55px solid rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.2);
+  }
+  
+  .ios button.alert-button.alert-button-cancel {
+    border-right: 0;
+    border-bottom-left-radius: 13px;
+    border-top-left-radius: 13px;
+  }
+  
+  .ios button.alert-button.alert-button-confirm {
+    border-bottom-right-radius: 13px;
+    border-top-right-radius: 13px;
+  }

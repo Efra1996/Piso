@@ -22,7 +22,15 @@ const routes: Routes = [
   {
     path: 'cuentas',
     loadChildren: () => import('./pages/cuentas/cuentas.module').then( m => m.CuentasPageModule)
+  },  {
+    path: 'configuraciones',
+    loadChildren: () => import('./pages/configuraciones/configuraciones.module').then( m => m.ConfiguracionesPageModule)
+  },
+  {
+    path: 'tickets',
+    loadChildren: () => import('./pages/tickets/tickets.module').then( m => m.TicketsPageModule)
   }
+
 
 ];
 

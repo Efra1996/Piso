@@ -1,0 +1,64 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="ion-text-uppercase">
+    <ion-buttons slot="start">
+      <ion-menu-button color="secondary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="center-title" >Configuraciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+ <!-- Recargar la pagina -->
+<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+</ion-refresher>
+  <!-- Boton para nuevo producto -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="setProducto(true)">
+      <ion-icon name="add-sharp"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+<!-- Lista de productos -->
+  <ion-list *ngFor="let producto of productosModificar; let i = index">
+    <ion-item color="medium">
+    
+    <ion-input aria-label="nombre" type="text" [value]="producto.nombre" (ionInput)="verificarCambios($event,i)"  fill="outline" color="warning" [id]="'nombreInput_' + i"></ion-input>
+    
+    <ion-input type="number" color="warning" label="" [value]="producto.precio" (ionInput)="verificarCambios($event,i)"  fill="outline" [id]="'precioInput_' + i"></ion-input>
+
+    <ion-button size="small" color="success" style="margin-right: 5px;" [disabled]="producto.comprado" (click)="confirmarCambios(producto,i)" >
+      <ion-icon  name="save" ></ion-icon>
+    </ion-button>
+
+    <ion-button size="small" color="danger" [id]="'present-alert_'+i" >
+      <ion-icon  name="trash"></ion-icon>
+    </ion-button>
+    <ion-alert [trigger]="'present-alert_'+i" class="custom-alert" [header]="'Quieres borrar el producto: '+producto.nombre" [buttons]="alertButtons" (didDismiss)="setResult($event,producto)"></ion-alert>
+
+    </ion-item>
+  </ion-list>
+
+<!-- Modal para nuevo Producto (click)="modal.dismiss()" (submit)="nuevoProducto()"-->
+<ion-modal id="example-modal" [isOpen]="nuevoProducto" #modal (ionModalDidDismiss)="pulsarFuera($event)">
+  <ng-template>
+    <div class="wrapper">
+      <h1>Nuevo Producto</h1>
+      <form [formGroup]="formReg"  >
+      <ion-list lines="none">
+        <ion-item >
+          <ion-input label="Nombre"   formControlName="nombre"></ion-input>
+        </ion-item>
+        <ion-item >
+          <ion-input label="Precio" type="number" formControlName="precio"></ion-input>
+        </ion-item>
+        <ion-item   class="ion-align-items-center">
+          <ion-button  fill="clear" style="margin-left: 100px;"  color="success" (click)="registrarNuevoProducto()" [disabled]="!formReg.valid" >
+            <ion-icon name="checkmark"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </form>
+    </div>
+  </ng-template>
+</ion-modal>
+</ion-content>
