@@ -4,16 +4,30 @@ import { initializeApp } from "firebase/app";
 import { environment } from 'src/environments/environment';
 import { addDoc, collection, deleteDoc, getDocs, getFirestore, orderBy, query, updateDoc, where, writeBatch } from "firebase/firestore";
 import { Productos } from '../interfaces/interfaces';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Photo, Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Preferences } from '@capacitor/preferences';
+import { Platform } from '@ionic/angular';
+import { Capacitor } from '@capacitor/core';
+export interface UserPhoto {
+  filepath: string;
+  webviewPath?: string;
+}
 @Injectable({
   providedIn: 'root'
 })
 
 export class FirebaseService {
+  public photos: UserPhoto[] = [];
   app = initializeApp(environment.firebaseConfig);
   db = getFirestore(this.app);
   storage = getStorage();
+  photo!: Photo;
+  private PHOTO_STORAGE: string = 'photos';
   idFoto!: string;
-  constructor() {
+  private platform!: Platform;
+  constructor(platform: Platform) {
+    this.platform = platform;
   }
   async nuevoProducto(nombre: string, precio: string, comprado : boolean) {
     try {
@@ -129,72 +143,105 @@ export class FirebaseService {
         console.error("Error al ejecutar operaciones asíncronas:", error);
       });
   }
+  public async loadSaved() {
+    // Retrieve cached photo array data
+    const { value } = await Preferences.get({ key: this.PHOTO_STORAGE });
+    this.photos = (value ? JSON.parse(value) : []) as UserPhoto[];
   
-  // public async addNewFromGallery() {
+// Easiest way to detect when running on the web:
+  // “when the platform is NOT hybrid, do this”
+  if (!this.platform.is('hybrid')) {
+    // Display the photo by reading into base64 format
+    for (let photo of this.photos) {
+      // Read each saved photo's data from the Filesystem
+      const readFile = await Filesystem.readFile({
+          path: photo.filepath,
+          directory: Directory.Data
+      });
 
-  //   const capturedPhoto2 = await Camera.pickImages({
-  //     correctOrientation: false,
-  //     limit: 10,
-  //     quality: 100,
-  //   });
-  //   capturedPhoto2.photos.map(async (photos) => {
-  //     this.idFoto = new Date().getTime() + '.jpeg';
+      // Web platform only: Load the photo as base64 data
+      photo.webviewPath = `data:image/jpeg;base64,${readFile.data}`;
+    }
+  }
+  }
+  public async addNewFromGallery() {
 
-  //     this.photo = {
-  //       webPath: photos.webPath,
-  //       saved: true,
-  //       format: photos.format,
-  //     }
+    const capturedPhoto2 = await Camera.getPhoto({
+      resultType: CameraResultType.Uri,
+      source: CameraSource.Camera,
+      quality: 100
+    });
+      this.idFoto = new Date().getTime() + '.jpeg';
+      const savedImageFile = await this.savePicture(capturedPhoto2, this.idFoto);
+      this.photos.push(savedImageFile);
 
-  //     const savedImageFile = await this.savePicture(this.photo, this.idFoto);
+      Preferences.set({
+        key: this.PHOTO_STORAGE,
+        value: JSON.stringify(this.photos),
+      });
+    return this.photos;
 
-  //     this.photos.push(savedImageFile);
+  }
+  public async savePicture(photo: Photo, idFoto: string) {
+    // Convert photo to base64 format, required by Filesystem API to save
+    const base64Data = await this.readAsBase64(photo, idFoto);
 
-  //   })
-  //   return this.photos;
+    // Write the file to the data directory
+    const fileName = idFoto;
+    const savedFile = await Filesystem.writeFile({
+      path: fileName,
+      data: base64Data,
+      directory: Directory.Data
+    });
 
+    if (this.platform.is('hybrid')) {
+      // Display the new image by rewriting the 'file://' path to HTTP
+      // Details: https://ionicframework.com/docs/building/webview#file-protocol
+      return {
+        filepath: savedFile.uri,
+        webviewPath: Capacitor.convertFileSrc(savedFile.uri),
+      };
+    }
+    else {
+      // Use webPath to display the new image instead of base64 since it's
+      // already loaded into memory
+      return {
+        filepath: fileName,
+        webviewPath: photo.webPath
+      };
+    }
+  }
+  private async readAsBase64(photo: Photo, idFoto: string) {
+    // "hybrid" will detect Cordova or Capacitor
+    if (this.platform.is('hybrid')) {
+      // Read the file into base64 format
+      const file = await Filesystem.readFile({
+        path: photo.path!
+      });
+      // const mountainImagesRef = ref(this.storage, idFoto);
+      // uploadBytes(mountainImagesRef, blob).then((snapshot) => {
+      //   this.nuevaImagen(idFoto).then(() => {
+      //     console.log('Uploaded a blob or file!');
+  
+      //   })
+      // });
+  
+      return file.data;
+    }
+    else {
+      // Fetch the photo, read as a blob, then convert to base64 format
+      const response = await fetch(photo.webPath!);
+      const blob = await response.blob();
+      const mountainImagesRef = ref(this.storage, idFoto);
+    uploadBytes(mountainImagesRef, blob).then((snapshot) => {
+      this.nuevaImagen(idFoto).then(() => {
+        console.log('Uploaded a blob or file!');
 
-
-
-  // }
-  // public async savePicture(photo: Photo, idFoto: string) {
-  //   // Convert photo to base64 format, required by Filesystem API to save
-  //   const base64Data = await this.readAsBase64(photo, idFoto);
-
-  //   // Write the file to the data directory
-  //   const fileName = idFoto;
-  //   const savedFile = await Filesystem.writeFile({
-  //     path: fileName,
-  //     data: base64Data,
-  //     directory: Directory.Data
-  //   });
-
-  //   // Use webPath to display the new image instead of base64 since it's
-  //   // already loaded into memory
-  //   return {
-  //     filepath: fileName,
-  //     webviewPath: photo.webPath
-  //   };
-  // }
-  // private async readAsBase64(photo: Photo, idFoto: string) {
-  //   // Fetch the photo, read as a blob, then convert to base64 format
-  //   const response = await fetch(photo.webPath!);
-  //   const blob = await response.blob();
-
-
-
-  //   const mountainImagesRef = ref(this.storage, idFoto);
-  //   uploadBytes(mountainImagesRef, blob).then((snapshot) => {
-  //     this.nuevaImagen(idFoto).then(() => {
-  //       console.log('Uploaded a blob or file!');
-
-  //     })
-  //   });
-
-
-
-  //   return await this.convertBlobToBase64(blob) as string;
-  // }
+      })
+    });
+      return await this.convertBlobToBase64(blob) as string;
+    }
+  }
 
   private convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
     const reader = new FileReader();

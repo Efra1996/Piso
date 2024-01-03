@@ -13,3 +13,9 @@ export interface Cuentas {
     nombre: string,
     saldo : number
 }
+export interface Foto{
+    id : string,
+    url : string,
+    seleccionada : boolean,
+
+}
