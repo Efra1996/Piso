@@ -183,7 +183,9 @@ export class CuentasPage implements OnInit {
     
       // Obtener día, mes y año
       const dia = fecha.getDate();
+      let diaFormat = dia < 10 ? '0'+ dia :dia;
       const mes = fecha.getMonth() + 1; // Los meses van de 0 a 11
+      let mesFormat = mes<10 ? '0'+mes : mes;
       const anio = fecha.getFullYear();
     
       // Obtener horas y minutos
@@ -191,7 +193,7 @@ export class CuentasPage implements OnInit {
       const minutos = fecha.getMinutes();
       let minutes = minutos < 10 ? '0' + minutos : minutos;
       // Formatear la fecha y hora
-      const fechaFormateada = `${dia}/${mes}/${anio} ${horas}:${minutes}`;
+      const fechaFormateada = `${diaFormat}/${mesFormat}/${anio} ${horas}:${minutes}`;
     
       return fechaFormateada;
     }

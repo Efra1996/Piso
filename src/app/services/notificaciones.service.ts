@@ -1,13 +1,28 @@
 import { Injectable } from '@angular/core';
-import { PushNotifications } from '@capacitor/push-notifications';
+import { initializeApp } from "firebase/app";
+
+import {
+  ActionPerformed,
+  PushNotificationSchema,
+  PushNotifications,
+  Token,
+} from '@capacitor/push-notifications';
+import { getMessaging,getToken  } from "firebase/messaging";
+import { environment } from 'src/environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificacionesService {
+  app = initializeApp(environment.firebaseConfig);
+  
 
-  constructor() { }
+  constructor() {
+    //const messaging = this.app.messaging()
+   }
 }
+//getToken(this!.messaging, {vapidKey: "BKagOny0KF_2pCJQ3m....moL0ewzQ8rZu"});
 const addListeners = async () => {
   await PushNotifications.addListener('registration', token => {
     console.info('Registration token: ', token.value);
