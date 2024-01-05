@@ -31,7 +31,7 @@ export class HistorialPage implements OnInit {
           return -1; // Mover las fechas no válidas al final
         }
   
-        return dateA.getTime() - dateB.getTime();
+        return dateB.getTime() - dateA.getTime();
       });
       this.historial=historial;
     })
