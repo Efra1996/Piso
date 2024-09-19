@@ -14,6 +14,7 @@ export class CuentasPage implements OnInit {
   cuentas : Cuentas[]=[];
   isModalOpen: boolean=false;
   nuevoPago: boolean=false;
+  nuevaDeuda: boolean = false;
   moroso : boolean = false;
   cuentaDebe! : Cuentas;
   cantidadPagada : number =0;
@@ -40,6 +41,9 @@ export class CuentasPage implements OnInit {
   }
   setPago(isOpen: boolean) {
     this.nuevoPago = isOpen;
+  }
+  setDeuda(isOpen: boolean) {
+    this.nuevaDeuda = isOpen;
   }
 
   async getAll(){
@@ -96,6 +100,7 @@ export class CuentasPage implements OnInit {
     this.isModalOpen = false;
     this.moroso=false;
     this.nuevoPago=false;
+    this.nuevaDeuda=false;
   }
   comprobarCambios(event : any){
     this.cantidadPagada=event.detail.value;
@@ -140,7 +145,45 @@ export class CuentasPage implements OnInit {
 
     ).catch();
   }
+  async registrarNuevaDeuda(){
+    let cantidadDeuda : number = this.formReg.value.precio;
+    const producto : Productos []= [{
+      nombre : this.formReg.value.nombre,
+      precio : this.formReg.value.precio,
+      comprado : false
+    }];
+    let saldosModificados: Cuentas[] = [...this.cuentas]; // Crear una copia del array
+    let cantidadPagada : number = parseFloat(cantidadDeuda.toString());
+    let cuentaDebeIndex = saldosModificados.findIndex((cuenta) => cuenta.nombre !== this.formReg.value.pagador);
+    let cuentaPagaIndex = saldosModificados.findIndex((cuenta) => cuenta.nombre === this.formReg.value.pagador);
+  
+    saldosModificados[cuentaDebeIndex] = { ...saldosModificados[cuentaDebeIndex] }; // Crear una copia del objeto
+    saldosModificados[cuentaDebeIndex].saldo -= cantidadDeuda; // Saldo positivo restamos lo que se ha pagado
+  
+    saldosModificados[cuentaPagaIndex] = { ...saldosModificados[cuentaPagaIndex] }; // Crear una copia del objeto
+    let number : number =  saldosModificados[cuentaPagaIndex].saldo + cantidadPagada; // saldo negativo sumamos lo que se ha pagado
+    saldosModificados[cuentaPagaIndex].saldo = number ; 
+    saldosModificados.forEach(
+      (cuenta)=>{
+        this.firebase.actualizarSaldo(cuenta.nombre,cuenta.saldo).then(()=>{
+          this.cuentas=[];
+          this.getAll();
+        }).catch();
+      }
+    );
+    await this.firebase.historialCompra(this.formReg.value.pagador,producto,this.formReg.value.precio,this.obtenerFechaYHoraActual()).then(
+      ()=>{
+        this.cantidadPagada=0;
+        this.nuevoPago=false;
+        this.formReg.controls['pagador'].setValue('');
+        this.formReg.controls['nombre'].setValue('');
+        this.formReg.controls['precio'].setValue('');
 
+        this.mostrarToast('Se han actualizado los saldos!');
+      }
+
+    ).catch();
+  }
   async mostrarToast(mensaje : string) {
     const toast = await this.toastController.create({
       message: mensaje,

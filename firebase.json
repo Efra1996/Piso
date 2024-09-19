@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "piso-33258", 
     "public": "www",
     "ignore": [
       "firebase.json",

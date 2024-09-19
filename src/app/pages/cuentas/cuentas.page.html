@@ -83,16 +83,24 @@
   </ion-modal>
 <!-- Boton para nuevo gasto -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="setPago(true)">
+    <ion-fab-button >
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="setDeuda(true)">
+        <ion-icon name="skull-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="setPago(true)">
+        <ion-icon name="cut-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
   </ion-fab>
-<!-- Modal para el gasto -->
+<!-- Modal para el gasto compartido-->
 <!-- Modal para nuevo Producto (click)="modal.dismiss()" (submit)="nuevoProducto()"-->
 <ion-modal id="example-modal" [isOpen]="nuevoPago" #modal (ionModalDidDismiss)="pulsarFuera($event)">
   <ng-template>
     <div class="wrapper">
-      <h1>Nuevo Pago</h1>
+      <h1>Nuevo Pago Compartido</h1>
       <form [formGroup]="formReg"  >
       <ion-list lines="none">
         <ion-item >
@@ -109,6 +117,36 @@
         </ion-item>
         <ion-item   class="ion-align-items-center">
           <ion-button  fill="clear" style="margin-left: 100px;"  color="success" (click)="registrarNuevoPago()" [disabled]="!formReg.valid" >
+            <ion-icon name="checkmark"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </form>
+    </div>
+  </ng-template>
+</ion-modal>
+<!-- Modal cenas -->
+<!-- Modal para nuevo Producto (click)="modal.dismiss()" (submit)="nuevoProducto()"-->
+<ion-modal id="example-modal" [isOpen]="nuevaDeuda" #modal (ionModalDidDismiss)="pulsarFuera($event)">
+  <ng-template>
+    <div class="wrapper">
+      <h1>Nueva deuda</h1>
+      <form [formGroup]="formReg"  >
+      <ion-list lines="none">
+        <ion-item >
+          <ion-input label="Concepto"   formControlName="nombre"></ion-input>
+        </ion-item>
+        <ion-item >
+          <ion-input label="Precio" type="number" formControlName="precio"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-select aria-label="Persona" interface="popover" placeholder="Elige al pringado que paga" formControlName="pagador">
+            <ion-select-option value="efra">Efra</ion-select-option>
+            <ion-select-option value="maría">María</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item   class="ion-align-items-center">
+          <ion-button  fill="clear" style="margin-left: 100px;"  color="success" (click)="registrarNuevaDeuda()" [disabled]="!formReg.valid" >
             <ion-icon name="checkmark"></ion-icon>
           </ion-button>
         </ion-item>
