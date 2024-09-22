@@ -14,6 +14,7 @@ export class FolderPage implements OnInit {
     { title: 'Historial', url: '/historial', icon: 'receipt' },
     { title: 'Cuentas', url: '/cuentas', icon: 'wallet' },
     { title: 'Configuraciones', url: '/configuraciones', icon: 'settings' },
+    { title: 'Lista Efra', url: '/lista-efra', icon: 'bag-handle' },
     { title: 'Tickets', url: '/tickets', icon: 'ticket' },
 
 

@@ -3,7 +3,7 @@ import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'fire
 import { initializeApp } from "firebase/app";
 import { environment } from 'src/environments/environment';
 import { addDoc, collection, deleteDoc, getDocs, getFirestore, orderBy, query, updateDoc, where, writeBatch } from "firebase/firestore";
-import { Productos } from '../interfaces/interfaces';
+import { Productos, ProductosEfra } from '../interfaces/interfaces';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Photo, Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Preferences } from '@capacitor/preferences';
@@ -64,7 +64,67 @@ export class FirebaseService {
         });
     });
   }
+  async nuevoCumbiPorducto(nombre: string, comprado : boolean) {
+    try {
+      const docRef = addDoc(collection(this.db, "cumbiLista"), {
+        nombre: nombre,
+        comprado:comprado
+      }).then(() => {
+        console.log("Document writte");
+      }).catch(() => {
+       console.log("Fail");
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
 
+  }
+  recuperarListaEfra(): Promise<any> {
+    const productossRef = collection(this.db, "cumbiLista");
+    const q = query(productossRef);
+    const productos: any[] = [];
+    return new Promise((resolve, reject) => {
+      getDocs(q)
+        .then((querySnapshot) => {
+
+          querySnapshot.forEach((doc) => {
+            productos.push(doc.data());
+            resolve(productos);
+          });
+          resolve(null);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+  actualizarEstadoLista(productos: ProductosEfra[]): Promise<any> {
+    const productossRef = collection(this.db, "cumbiLista");
+    const batch = writeBatch(this.db);
+  
+    // Crea un array de promesas para todas las operaciones asíncronas
+    const promises = productos.map(producto => {
+      const q = query(productossRef, where("nombre", "==", producto.nombre));
+      return getDocs(q)
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            batch.update(doc.ref, {
+              comprado: producto.comprado
+            });
+          });
+        })
+        .catch((error) => {
+          console.error("Error al obtener datos:", error);
+        });
+    });
+  
+    // Espera a que todas las promesas se completen antes de realizar el commit
+    return Promise.all(promises)
+      .then(() => batch.commit())
+      .catch((error) => {
+        console.error("Error al ejecutar operaciones asíncronas:", error);
+      });
+  }
   borrarProducto(nombre: string) {
     const productossRef = collection(this.db, "productos");
     const q = query(productossRef, where("nombre", "==", nombre));

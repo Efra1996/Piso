@@ -29,6 +29,10 @@ const routes: Routes = [
   {
     path: 'tickets',
     loadChildren: () => import('./pages/tickets/tickets.module').then( m => m.TicketsPageModule)
+  },
+  {
+    path: 'lista-efra',
+    loadChildren: () => import('./pages/lista-efra/lista-efra.module').then( m => m.ListaEfraPageModule)
   }
 
 

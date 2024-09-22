@@ -19,3 +19,7 @@ export interface Foto{
     seleccionada : boolean,
 
 }
+export interface ProductosEfra {
+    nombre: string,
+    comprado: boolean
+}

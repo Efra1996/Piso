@@ -11,6 +11,7 @@ export class AppComponent {
     { title: 'Cuentas', url: '/cuentas', icon: 'wallet' },
     { title: 'Configuraciones', url: '/configuraciones', icon: 'settings' },
     { title: 'Tickets', url: '/tickets', icon: 'ticket' },
+    { title: 'Lista Efra', url: '/lista-efra', icon: 'bag-handle' },
     { title: 'Inicio', url: '/folder/Inbox', icon: 'home' },
 
   ];
