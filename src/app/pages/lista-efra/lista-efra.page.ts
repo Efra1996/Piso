@@ -124,7 +124,7 @@ export class ListaEfraPage implements OnInit {
   guardarCambios(){
     if(this.comrpobarCambios()){
      const productoComprado= this.productosActualizados.find(producto => producto.comprado===true);
-     if(productoComprado){
+     if(this.productosComprados.length>0){
       this.firebase.actualizarEstadoLista(this.productosComprados).then(()=>{
         this.listaCompra=[];
         this.mostrarToast('Porfin haces la compra! ☺');
