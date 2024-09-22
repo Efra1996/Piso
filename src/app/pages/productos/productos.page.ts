@@ -48,6 +48,7 @@ export class ProductosPage implements OnInit {
       comprado : false
     });
     this.isModalOpen=false;
+    this.formReg.reset();
   }
   setOpen(isOpen: boolean) {
     this.isModalOpen = isOpen;

@@ -4,7 +4,24 @@
       <ion-menu-button color="secondary"></ion-menu-button>
     </ion-buttons>
     <ion-title class="center-title" >Cumbi Lista</ion-title>
+    <ion-grid>
+      <ion-row>
+        <ion-col >
+          <ion-button (click)="setOpen(true)" color="secondary">
+            <ion-icon slot="start" name="add-sharp"></ion-icon>
+            Nuevo producto
+          </ion-button>
+        </ion-col>
+        <ion-col >
+          <ion-button (click)="guardarCambios()" [disabled]="cambios" color="secondary" expand="full">
+            <ion-icon slot="start" name="save-sharp"></ion-icon>
+            Guardar
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-toolbar>
+  
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
@@ -12,22 +29,7 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
       <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-grid>
-    <ion-row>
-      <ion-col >
-        <ion-button (click)="setOpen(true)" color="secondary">
-          <ion-icon slot="start" name="add-sharp"></ion-icon>
-          Nuevo producto
-        </ion-button>
-      </ion-col>
-      <ion-col >
-        <ion-button (click)="guardarCambios()" [disabled]="cambios" color="secondary" expand="full">
-          <ion-icon slot="start" name="save-sharp"></ion-icon>
-          Guardar
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+
 <ion-list *ngFor="let producto of productos" >
 <ion-item style="color: white;" >
   <ion-text style="width: 150px;" >{{producto.nombre}}</ion-text>
